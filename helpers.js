@@ -1,87 +1,7 @@
 /***********************************
- * Makes synth or drum noises
- ***********************************/
-class NoiseyMakey {
-  constructor() {
-    this.synth = this._makeASynth();
-    this.wham = this._makeAWham();
-    
-    this.isSynth = true;
-    this.synthSounds = ['B4', 'A4', 'G4', 'F4', 'E4', 'D4', 'C4', 
-               'B3', 'A3', 'G3', 'F3', 'E3', 'D3', 'C3', 
-               'B2', 'A2', 'G2', 'F2'];
-    
-    this.magentaPlayer = new mm.Player();
-    
-    // Some magenta drums are too loud.
-    this.magentaPlayer.drumKit.kick.volume.value = -3;
-    this.magentaPlayer.drumKit.snare.volume.value = -10;
-    this.magentaPlayer.drumKit.openHihat.volume.value = -10;
-    this.magentaPlayer.drumKit.crash.volume.value = -6;
-    this.magentaPlayer.drumKit.ride.volume.value = -6;
-    
-    // From https://github.com/tensorflow/magenta-js/blob/master/music/src/core/data.ts#L35
-    this.magentaPitches = [36, 38, 42, 46, 45, 48, 50, 49, 51, /*repeat*/ 35, 27, 29, 47, 30, 52, 44]; 
-
-    // TODO: someone help me make a clap, please :sob:
-    //const envelope = {attack: 0, decay: 2, sustain: 0.05, release: 0, attackCurve: 'exponential'};
-    //const clap = new Tone.NoiseSynth({noise:{type:'white'},envelope}).toMaster();
-  }
-  
-  play() {
-    Tone.context.resume();
-    Tone.Transport.start();
-  }
-  
-  pause() {
-    Tone.Transport.pause();
-  }
-  
-  // Whether we are currently on to play a drum or a synth
-  getSound() {
-    return this.isSynth ? 1 : 2;
-  }
-  
-  // Play specific sounds.
-  // TODO: should probably use magenta's synth for this, maybe:
-  // this.magentaPlayer.playNote({startTime: which, endTime: which + 1, pitch: 35, velocity: 100, isDrum: false}, '16n');
-  playSynth(which) {
-    this.synth.triggerAttackRelease(this.synthSounds[which], '16n');
-  }
-  
-  playDrum(which) {
-   this.magentaPlayer.drumKit.playNote(this.magentaPitches[which]);
-  }
-  
-  _makeASynth() {
-    // Set up tone.
-    const synth = new Tone.PolySynth(16, Tone.Synth).toMaster();
-    return synth;
-  }
-  
-  _makeAWham() {
-    const synth = new Tone.PolySynth(3, Tone.Synth, {
-			"oscillator" : {
-				"type" : "fatsawtooth",
-				"count" : 3,
-				"spread" : 30
-			},
-			"envelope": {
-				"attack": 0.01,
-				"decay": 0.1,
-				"sustain": 0.5,
-				"release": 0.4,
-				"attackCurve" : "exponential"
-			},
-		}).toMaster();
-		return synth;
-  }
-}
-
-/***********************************
  * Board of dots
  ***********************************/
-class Board {
+export class Board {
   constructor() {
     this.data = [];
     this.ripples = [];
@@ -204,32 +124,18 @@ class Board {
     }
   }
   
-  animate(currentColumn, noiseyMakey) {
+  // Paint the column at the audio event's scheduled time. Audio is scheduled
+  // separately by AudioEngine so DOM work cannot delay note attacks.
+  animate(currentColumn) {
     for (let i = 0; i < 16; i++) {
       const pixels = this.ui.rows[i].querySelectorAll('.pixel');
       this._clearPreviousAnimation(pixels);
       
-      // On the current column any cell can either be:
-      // - a sound we need to make
-      // - empty, in which case we paint the green time bar.
-      
-      // Is the current cell at this time a sound?
-      const sound = this.data[i][currentColumn].on
+      const sound = this.data[i][currentColumn].on;
       if (sound) {
-        // Start a ripple from here!
-        this.ripples.push({x: i, y: currentColumn, distance: 0, sound:sound});
-        
-        // It's a note getting struck.
+        this.ripples.push({x: i, y: currentColumn, distance: 0, sound});
         pixels[currentColumn].classList.add('active');
-      
-        // Play the note.
-        if (sound === 1) {
-          noiseyMakey.playSynth(i);
-        } else {
-          noiseyMakey.playDrum(i);
-        }
       } else {
-        // It's not a sound, it is a time bar.
         pixels[currentColumn].classList.add('bar');
       }
     }

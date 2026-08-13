@@ -23,7 +23,7 @@
       Load ML(~10Mb)
     </button>
     <br>
-    <label class="controls glitcheroni">Step<input placeholder="100" type="number" value="100" id="input">ms</label>
+    <label class="controls glitcheroni">Step<input placeholder="100" type="number" value="100" min="40" max="2000" step="1" id="input">ms</label>
     <button class="controls glitcheroni" id="btnPlay" onclick="playOrPause()">
       Play! 
     </button>
@@ -126,10 +126,5 @@
     </footer>
   </body>
   
-  <script src="https://cdn.jsdelivr.net/npm/@magenta/music@1.1.5"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/tone/0.7.1/Tone.min.js"></script>
-  
-  <!-- these could be a module with imports -->
-  <script src="./helpers.js"></script>
-  <script src="./script.js" defer></script>
+  <script type="module" src="./script.js"></script>
 </html>
