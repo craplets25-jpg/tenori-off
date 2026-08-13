@@ -1,0 +1,30 @@
+{
+  "name": "tenori-off",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "vite --host 0.0.0.0",
+    "build": "vite build",
+    "preview": "vite preview --host 0.0.0.0",
+    "test": "vitest run",
+    "test:audio": "vitest run --config vitest.browser.config.js"
+  },
+  "dependencies": {
+    "@magenta/music": "1.23.1",
+    "tone": "15.1.22"
+  },
+  "overrides": {
+    "minimist": "1.2.8",
+    "protobufjs": "7.6.5",
+    "static-eval": "2.1.1",
+    "static-module": "3.0.4",
+    "tone": "15.1.22"
+  },
+  "devDependencies": {
+    "@vitest/browser-playwright": "4.1.10",
+    "playwright": "1.62.1",
+    "vite": "8.2.1",
+    "vitest": "4.1.10"
+  }
+}

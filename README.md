@@ -17,3 +17,25 @@ The **Improvise** button will auto generate drums to match your synth using
 ### Ok, go make fun things now!
 
 ![gif](https://user-images.githubusercontent.com/1369170/41994031-05b13eea-7a02-11e8-9948-077a0a56b038.gif)
+
+## Development
+
+The app uses Tone.js 15 through Vite. Synths and drums share one AudioContext,
+Transport, mix bus, and limiter. Magenta model code is loaded only after choosing
+the **Load ML** action.
+
+```sh
+npm install
+npm run dev
+npm test
+npm run build
+```
+
+The fast test suite covers tempo validation, sequence configuration, and rapid
+play/pause behavior. The real-browser suite uses `Tone.Offline` to verify exact
+step times and rendered audio:
+
+```sh
+npx playwright install --with-deps chromium
+npm run test:audio
+```
